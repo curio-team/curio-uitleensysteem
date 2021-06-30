@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -46,8 +47,11 @@ Route::get('/admin/types/{productTypeId}/aanpassen', [ProductTypeController::cla
 Route::post('/admin/types/{productTypeId}/aanpassen', [ProductTypeController::class, 'processEditProductType'])->name('processEditProductType')->middleware('auth');
 Route::get('/admin/types/{productTypeId}/verwijderen', [ProductTypeController::class, 'processDeleteProductType'])->name('processDeleteProductType')->middleware('auth');
 
+Route::get('/admin/studenten/{studentId}', [StudentController::class, 'showStudent'])->name('showStudent')->middleware('auth');
+
 Route::get('/admin/import', [ImportController::class, 'listImports'])->name('import')->middleware('auth');
 Route::post('/admin/import/product', [ImportController::class, 'processProductImport'])->name('processProductImport')->middleware('auth');
+Route::get('/admin/import/studenten', [ImportController::class, 'processStudentImport'])->name('processStudentImport')->middleware('auth');
 
 // AJAX routes
 Route::get('/find-products', [ProductController::class, 'findProducts'])->name('findProducts');

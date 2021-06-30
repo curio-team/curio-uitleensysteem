@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductType;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use StudioKaa\Amoclient\Facades\AmoAPI;
 class ImportController extends Controller
 {
     public function listImports(){
@@ -94,6 +95,40 @@ class ImportController extends Controller
         $request->session()->flash('success', $row-1 .' producten verwerkt, waarvan '. $newCount .' nieuwe en '. $updateCount .' updates.');
         $request->session()->flash('added', $added);
         $request->session()->flash('changed', $changed);
+
+        return redirect()->route('import');
+    }
+
+    public function processStudentImport(Request $request){
+        $users = json_decode(AmoAPI::get('users'), true);
+
+        if($users){
+            Student::truncate();
+            $idList = [];
+
+            foreach($users as $user){
+                if ($user['type'] === "student") {
+                    $id = preg_replace('/^([a-zA-z]*)/', "", $user['id']);
+
+                    // Skip als studentnummer al bekend is
+                    if(!in_array($id, $idList)) {
+                        $idList[] = $id;
+
+                        $student = new Student;
+                        $student->id = $id;
+                        $student->name = $user['name'];
+                        $student->email = $user['email'];
+                        $student->save();
+                    }
+                }
+            }
+
+            $request->session()->flash('success', 'Studenten succesvol geïmporteerd!');
+
+            return redirect()->route('import');
+        }
+
+        $request->session()->flash('error', 'Kon studenten niet importeren! API gaf geen studenten terug.');
 
         return redirect()->route('import');
     }

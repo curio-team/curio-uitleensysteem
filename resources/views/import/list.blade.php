@@ -29,7 +29,7 @@
             <tr>
                 <td>Studenten</td>
                 <td>
-                    <button class="btn btn-primary">Updaten met Curio API</button>
+                    <a href="{{ route('processStudentImport') }}" class="btn btn-primary">Updaten met Curio API</a>
                 </td>
             </tr>
         </table>

@@ -9,7 +9,11 @@
     @if($product->currentReservation())
         <td>{{ $product->currentReservation()->issue_date }}</td>
         <td>{{ $product->currentReservation()->return_by_date }}</td>
-        <td>{{ $product->currentReservation()->student_number }}</td>
+        @if($product->currentReservation()->student)
+            <td><a href="{{ route('showStudent', $product->currentReservation()->student->id) }}">{{ $product->currentReservation()->student->name }}</a></td>
+        @else
+            <td>{{ $product->currentReservation()->student_number }}</td>
+        @endif
     @else
         <td></td>
         <td></td>

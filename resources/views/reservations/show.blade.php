@@ -22,7 +22,11 @@
                         <p>Gereserveerd door:</p>
                     </div>
                     <div class="col-sm-8">
-                        <p>{{ $reservation->student_number }}</p>
+                        @if($reservation->student)
+                            <p><a href="{{ route('showStudent', $reservation->student->id) }}">{{ $reservation->student->name }}</a></p>
+                        @else
+                            <p>{{ $reservation->student_number }}</p>
+                        @endif
                     </div>
                 </div>
                 <div class="row">
