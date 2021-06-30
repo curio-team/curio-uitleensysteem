@@ -1,62 +1,51 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center"><a href="https://curio.nl" target="_blank"><img src="http://gebouw-t.nl/wp-content/uploads/2019/10/curio-01-zwart-logo-rgb.png" width="400"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Hoe installeer ik het project
 
-## About Laravel
+- Zet een Apache/Nginx webserver met PHP7.4 en MySQL (MariaDB) klaar. Ga dan naar de web folder van je webserver (www, htdocs, enz.) Voer dan vanaf die map het volgende commando in de terminal uit:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+  `git clone https://github.com/StevenVanRosendaal/curio-uitleensysteem.git`
+  
+- Maak een database genaamd "uitleensysteem" aan met een gekoppelde nieuwe gebruiker. Het kan ook gedaan worden door de volgende queries uit te voeren over de database:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+  `CREATE DATABASE uitleensysteem;`
+ 
+  `GRANT ALL PRIVILEGES ON uitleensysteem.* TO 'curio_uitleensysteem_admin'@'localhost' identified by '[VUL HIER EEN WACHTWOORD IN]';`
+ 
+  `FLUSH PRIVILEGES;`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Kopieer in de root folder van dit project de .env.example file als .env in dezelfde (root) folder. Of voer het volgende commando uit:
 
-## Learning Laravel
+  `cp .env.example .env`
+  
+- Open de .env file in een text editor, en zet de instellingen voor de database goed. Gebruik username "uitleensysteem" en het wachtwoord zoals dat in de vorige stap ingesteld is.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Voer de volgende terminal commando's uit in de root folder van dit project
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+  `composer install`
 
-## Laravel Sponsors
+  `php artisan key:generate`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+  `npm install`
+  
+  `php artisan storage:link`
 
-### Premium Partners
+  `npm run prod`
+  
+  `php artisan migrate:fresh --seed`
+  
+- Er wordt een admin account gegenereerd. Het wachtwoord hiervoor wordt in de console getoond. Sla deze ergens op. Deze heb je nodig om in te loggen in de backend van het systeem. Je kan later nieuwe gebruikers aanmaken.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
+- De site zou nu moeten draaien. Stel je webserver zo in dat er met een URL de site bereikt kan worden. Open dan met de browser die URL. Veel succes!
 
-## Contributing
+## Image Optimizer
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Het uitleensysteem komt met een image optimizer die plaatjes verkleint zodat er ruimte op de server schijf wordt bespaard. Zodat dit tooltje werkt, moet het volgende commando als super user uit worden gevoerd op de server:
 
-## Code of Conduct
+`sudo apt-get install jpegoptim optipng pngquant gifsicle webp`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Dit installeert de pakketten die de optimizer gebruikt om de plaatjes te optimalizeren.
 
-## Security Vulnerabilities
+## Credits
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Het Curio Uitleensysteem is ontwikkeld door Steven van Rosendaal van Curio Breda. Voor vragen, stuur een mail naar <a href="mailto:s.vanrosendaal@curio.nl">s.vanrosendaal@curio.nl</a>
