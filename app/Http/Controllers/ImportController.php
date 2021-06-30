@@ -23,8 +23,6 @@ class ImportController extends Controller
         $productTypes = ProductType::pluck('name', 'id')->toArray();
         $newCount = 0;
         $updateCount = 0;
-        $changed = [];
-        $added = [];
         $errors = [];
         if (($handle = fopen($filepath, "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
@@ -48,16 +46,14 @@ class ImportController extends Controller
                         $productType->save();
 
                         $productTypeId = $productType->id;
+                        $productTypes[$productType->id] = $productType->name;
                     }
 
                     $product = $products->where('barcode', $data[$headers['barcode']])->first();
                     if(!$product){
-                        $updated = false;
                         $newCount++;
                         $product = new Product;
                     } else {
-                        $updated = true;
-                        $changed['old'][] = $product;
                         $updateCount++;
                     }
 
@@ -69,12 +65,6 @@ class ImportController extends Controller
 
                     try{
                         $product->save();
-
-                        if($updated){
-                            $changed['new'][] = $product;
-                        } else {
-                            $added[] = $product;
-                        }
                     } catch (\Throwable $e) {
                         Log::error($e);
                         $errors[] = 'Mislukt om product met barcode "'. $data[$headers['barcode']] .'" op te slaan. Kijk de CSV na voor fouten.';
@@ -93,8 +83,6 @@ class ImportController extends Controller
         }
 
         $request->session()->flash('success', $row-1 .' producten verwerkt, waarvan '. $newCount .' nieuwe en '. $updateCount .' updates.');
-        $request->session()->flash('added', $added);
-        $request->session()->flash('changed', $changed);
 
         return redirect()->route('import');
     }

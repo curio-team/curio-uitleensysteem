@@ -3,12 +3,6 @@
 @section('content')
 
     <div class="container">
-        @if(session('added'))
-            @include('components.added-products-accordion', session('added'))
-        @endif
-        @if(session('changed'))
-            @include('components.changed-products-accordion', session('changed'))
-        @endif
         <table class="col-12 col-lg-6">
             <tr>
                 <td>Producten</td>
