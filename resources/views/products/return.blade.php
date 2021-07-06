@@ -59,7 +59,7 @@
                             <p>Gereserveerd Door:</p>
                         </div>
                         <div class="col-sm-8">
-                            <p>{{ $product->currentReservation()->student_number }}</p>
+                            <p><a href="{{ route('showStudent', $product->currentReservation()->student->id) }}">{{ $product->currentReservation()->student->name }}</a></p>
                         </div>
                     </div>
                     <div class="row">
