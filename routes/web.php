@@ -65,7 +65,7 @@ Route::get('/find-reservations', [ReservationController::class, 'findReservation
 Route::get('/login', function(){return redirect('/amoclient/redirect');})->name('login');
 Route::get('/amoclient/ready', function(){return redirect()->route('manageProducts');});
 
-Route::post('/logout', function(){return redirect('/amoclient/logout');})->name('logout');
+Route::get('/logout', function(){return redirect('/amoclient/logout');})->name('logout');
 
 Route::get('/register', function() {return abort(404);});
 Route::post('/register', function() {return abort(404);});
