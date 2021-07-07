@@ -72,7 +72,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('searchProducts') }}">
+                                    <a class="dropdown-item" href="#" onclick="$('#searchProductsModal').modal()">
                                         {{ __('Logout') }}
                                     </a>
                                 </div>
