@@ -21,6 +21,21 @@
                 </td>
             </tr>
             <tr>
+                <td>Afbeeldingen</td>
+                <td class="d-flex">
+                    <form id="imageImportForm" method="post" enctype="multipart/form-data" action="{{ route('processImageImport') }}">
+                        @csrf
+                        <input type="file" id="imageImport" name="imageImportZip" class="d-none" onchange="document.getElementById('imageImportForm').submit()" />
+                        <input type="button" class="btn btn-primary mr-2" value="Zip Uploaden" onclick="document.getElementById('imageImport').click();" />
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p>Hier kun je een zip uploaden met afbeeldingen voor de producten. Zorg ervoor dat de afbeeldingen de barcode van het product als naam hebben. Plaatjes mogen .png of .jpg/.jpeg zijn. Als een product al een afbeelding had, wordt deze overschreven.</p>
+                </td>
+            </tr>
+            <tr>
                 <td>Studenten</td>
                 <td>
                     <a href="{{ route('processStudentImport') }}" class="btn btn-primary">Updaten met Curio API</a>

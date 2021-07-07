@@ -7,7 +7,11 @@ use App\Models\ProductType;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 use StudioKaa\Amoclient\Facades\AmoAPI;
+use ZipArchive;
+
 class ImportController extends Controller
 {
     public function listImports(){
@@ -15,6 +19,9 @@ class ImportController extends Controller
     }
 
     public function processProductImport(Request $request){
+        $request->validate([
+            'productImportCSV' => 'required|file|mimes:csv,txt',
+        ]);
 
         $products = Product::all();
         $row = 0;
@@ -85,6 +92,82 @@ class ImportController extends Controller
         $request->session()->flash('success', $row-1 .' producten verwerkt, waarvan '. $newCount .' nieuwe en '. $updateCount .' updates.');
 
         return redirect()->route('import');
+    }
+
+    public function processImageImport(Request $request){
+        $request->validate([
+            'imageImportZip' => 'required|file|mimes:zip',
+        ]);
+
+        // Maak folder als deze niet bestaat
+        Storage::makeDirectory('tmp/zip');
+        $zipPath = Storage::path('tmp/zip');
+        $lockfilePath = $zipPath.'/.lock';
+        $allowedMimeTypes = [
+            "image/png",
+            "image/jpeg",
+        ];
+
+        if(!file_exists($lockfilePath)){
+
+            $lockfile = fopen($lockfilePath, 'w');
+            fclose($lockfile);
+
+            try{
+                $zip = new ZipArchive;
+                $zip->open($request->file('imageImportZip'));
+                $zip->extractTo($zipPath);
+                $zip->close();
+
+                // Loop door alle images heen, en sla ze op onder de juiste producten.
+                // Verwijder die image van de tmp folder zodra hij klaar is
+
+                $uploadCount = 0;
+                $successCount = 0;
+
+                foreach (Storage::files('tmp/zip') as $filePath) {
+                    if(in_array(Storage::mimeType($filePath), $allowedMimeTypes)){
+                        $barcode = basename(preg_replace('/\\.[^.\\s]{3,4}$/', '', $filePath));
+                        $product = Product::where('barcode', $barcode)->first();
+                        if($product){
+                            $file = Storage::path($filePath);
+                            $src = Storage::putFile('public/images', $file);
+                            $optimizerChain = OptimizerChainFactory::create();
+                            $optimizerChain->setTimeout(10)->optimize(Storage::path($src));
+                            $oldSrc = str_replace('storage', 'public', $product->image);
+                            Storage::delete($oldSrc);
+                            $product->image = str_replace('public', 'storage', $src);
+                            $product->save();
+                            $successCount++;
+                        }
+                        Storage::delete($filePath);
+                        $uploadCount++;
+                    }
+
+                }
+
+                unlink($lockfilePath);
+
+                if($uploadCount === $successCount) {
+                    $request->session()->flash('success', $successCount .' van de '. $uploadCount .' afbeeldingen geimporteerd!');
+                } else {
+                    $request->session()->flash('warning', $successCount .' van de '. $uploadCount .' afbeeldingen geimporteerd! Kijk na of alle barcodes kloppen.');
+                }
+
+                return redirect()->route('import');
+            } catch (\Throwable $e) {
+                Log::error($e);
+                unlink($lockfilePath);
+
+                $request->session()->flash('error', 'Import mislukt. Probeer het nogmaals.');
+
+                return redirect()->route('import');
+            }
+        } else {
+            $request->session()->flash('error', 'Iemand is al aan het importeren. Wacht een moment af en probeer het later nogmaals.');
+
+            return redirect()->route('import');
+        }
     }
 
     public function processStudentImport(Request $request){

@@ -51,6 +51,7 @@ Route::get('/admin/studenten/{studentId}', [StudentController::class, 'showStude
 
 Route::get('/admin/import', [ImportController::class, 'listImports'])->name('import')->middleware('auth');
 Route::post('/admin/import/product', [ImportController::class, 'processProductImport'])->name('processProductImport')->middleware('auth');
+Route::post('/admin/import/image', [ImportController::class, 'processImageImport'])->name('processImageImport')->middleware('auth');
 Route::get('/admin/import/studenten', [ImportController::class, 'processStudentImport'])->name('processStudentImport')->middleware('auth');
 
 // AJAX routes
