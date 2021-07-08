@@ -17,9 +17,21 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <p>Let op: Producten met een bestaande barcode worden overschreven. Als een meegegeven producttype nog niet bestaat, wordt deze automatisch aangemaakt.</p>
+                    <p>Let op: Producten met een bestaande barcode worden NIET overschreven. Als een meegegeven producttype nog niet bestaat, wordt deze automatisch aangemaakt.</p>
                 </td>
             </tr>
+            @if(Auth::user()->super_admin)
+                <tr>
+                    <td>Producten Overschrijven</td>
+                    <td class="d-flex">
+                        <form id="productImportForm" method="post" enctype="multipart/form-data" action="{{ route('processProductImportOverwrite') }}">
+                            @csrf
+                            <input type="file" id="productImportOverwrite" name="productImportOverwriteCSV" class="d-none" onchange="document.getElementById('productImportOverwriteForm').submit()" />
+                            <input type="button" class="btn btn-primary mr-2" value="Import Uploaden" onclick="document.getElementById('productImportOverwrite').click();" />
+                        </form>
+                    </td>
+                </tr>
+            @endif
             <tr>
                 <td>Afbeeldingen</td>
                 <td class="d-flex">
