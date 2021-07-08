@@ -32,11 +32,20 @@
 
   `npm run prod`
   
-  `php artisan migrate:fresh --seed`
+  `php artisan migrate:fresh`
   
-- Er wordt een admin account gegenereerd. Het wachtwoord hiervoor wordt in de console getoond. Sla deze ergens op. Deze heb je nodig om in te loggen in de backend van het systeem. Je kan later nieuwe gebruikers aanmaken.
+  `sudo chown -R www-data:www-data /path/to/your/laravel/root/directory`
+  
+  `sudo find /path/to/your/laravel/root/directory -type f -exec chmod 644 {} \;`
+  
+  `sudo find /path/to/your/laravel/root/directory -type d -exec chmod 755 {} \;`
+  
+  (Vervang hierboven het stukje /path/to/your/laravel/root/directory naar het pad van de root folder waar dit project in staat. Dit is de folder waar ook de .env file in staat.)
+  
+- De site zou nu moeten draaien. Stel je webserver zo in dat er met een URL de site bereikt kan worden. Open dan met de browser die URL.
 
-- De site zou nu moeten draaien. Stel je webserver zo in dat er met een URL de site bereikt kan worden. Open dan met de browser die URL. Veel succes!
+## Inloggen
+De login wordt geregeld via Curio Codes. Je moet daarom de waardes in de .env file aanpassen zodat deze werkt voor jouw applicatie. Maak een nieuwe API key aan in Curio Codes, en noteer de Client ID en de Client Secret. Vul deze twee waardes in, in de .env file bij `AMO_CLIENT_ID` en `AMO_CLIENT_SECRET`. Laat de rest van de waardes zoals ze al in de .env file staan. Je zou nu in moeten kunnen loggen met je Curio Codes account.
 
 ## Image Optimizer
 
@@ -45,6 +54,13 @@ Het uitleensysteem komt met een image optimizer die plaatjes verkleint zodat er 
 `sudo apt-get install jpegoptim optipng pngquant gifsicle webp`
 
 Dit installeert de pakketten die de optimizer gebruikt om de plaatjes te optimalizeren.
+
+## Image Import
+Voor de image import is het vereist dat php om kan gaan met .zip files. Daarom is de php-zip extensie vereist op de server. Gebruik het volgende commando om deze te installeren.
+
+`sudo apt-get install phpx.x-zip -y`
+
+Vervang de x.x door het versienummer van php wat momenteel draait op de server.
 
 ## Credits
 
