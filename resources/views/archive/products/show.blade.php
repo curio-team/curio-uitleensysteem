@@ -4,7 +4,7 @@
 
     <div class="container">
         <div class="row">
-            <h1>Product Beheren</h1>
+            <h1>Gearchiveerde Product</h1>
         </div>
 
         <div class="row mb-2">
@@ -80,8 +80,8 @@
                 <div class="row">
                     <div class="col-sm-4 d-flex">
                         <a href="{{ route('editProduct', $product->id) }}" class="btn btn-primary mr-1">Aanpassen</a>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#archiveProductModal">
-                            Archiveren
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dearchiveProductModal">
+                            Dearchiveren
                         </button>
                     </div>
                 </div>
@@ -119,6 +119,6 @@
         </div>
     </div>
 
-    @include('components.archive-product-modal', $product)
+    @include('components.dearchive-product-modal', $product)
 
 @endsection

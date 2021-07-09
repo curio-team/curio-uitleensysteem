@@ -34,7 +34,7 @@ Route::post('/admin/producten/toevoegen', [ProductController::class, 'processCre
 Route::get('/admin/producten/{productId}', [ProductController::class, 'manageProduct'])->name('manageProduct')->middleware('auth');
 Route::get('/admin/producten/{productId}/aanpassen', [ProductController::class, 'editProduct'])->name('editProduct')->middleware('auth');
 Route::post('/admin/producten/{productId}/aanpassen', [ProductController::class, 'processEditProduct'])->name('processEditProduct')->middleware('auth');
-Route::get('/admin/producten/{productId}/verwijderen', [ProductController::class, 'processDeleteProduct'])->name('processDeleteProduct')->middleware('auth');
+Route::get('/admin/producten/{productId}/archiveren', [ProductController::class, 'processArchiveProduct'])->name('processArchiveProduct')->middleware('auth');
 
 Route::get('/admin/reserveringen', [ReservationController::class, 'listReservations'])->name('listReservations')->middleware('auth');
 Route::get('/admin/reserveringen/{reservationId}', [ReservationController::class, 'manageReservation'])->name('manageReservation')->middleware('auth');
@@ -54,6 +54,10 @@ Route::post('/admin/import/product', [ImportController::class, 'processProductIm
 Route::post('/admin/import/product/overwrite', [ImportController::class, 'processProductImportOverwrite'])->name('processProductImportOverwrite')->middleware('auth');
 Route::post('/admin/import/image', [ImportController::class, 'processImageImport'])->name('processImageImport')->middleware('auth');
 Route::get('/admin/import/studenten', [ImportController::class, 'processStudentImport'])->name('processStudentImport')->middleware('auth');
+
+Route::get('/admin/archief/producten', [ProductController::class, 'showArchivedProducts'])->name('showArchivedProducts')->middleware('auth');
+Route::get('/admin/archief/producten/{productId}', [ProductController::class, 'showArchivedProduct'])->name('showArchivedProduct')->middleware('auth');
+Route::get('/admin/archief/producten/{productId}/dearchiveren', [ProductController::class, 'processDearchiveProduct'])->name('processDearchiveProduct')->middleware('auth');
 
 // AJAX routes
 Route::get('/find-products', [ProductController::class, 'findProducts'])->name('findProducts');

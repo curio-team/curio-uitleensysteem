@@ -26,7 +26,7 @@ class ProductController extends Controller
 
     public function reserveProduct(Request $request, $productId){
         // Zoek het product, of geef een 404 en kijk na of deze al een reservering heeft
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
         $reservation = $product->currentReservation();
 
         // Als het product al gereserveerd is, stuur terug naar zoekvenster
@@ -44,7 +44,7 @@ class ProductController extends Controller
 
     public function processReserveProduct(Request $request, $productId){
         // Zoek het product, of geef een 404
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
 
         // Controlleer of de opgegeven data via het formulier valide is
         $request->validate([
@@ -95,7 +95,7 @@ class ProductController extends Controller
             // Als er producten gevonden zijn, loop door de producten heen en genereer de blokjes waar ze in komen te staan
             if($products){
                 foreach($products as $product){
-                    if ($searchQuery === $product->barcode) {
+                    if ($searchQuery === $product->barcode && $product->archived == false) {
                         // Als de barcode precies klopt, laat gelijk doorgaan naar reservering of retour pagina
                         $listItems['redirect'] = $product->id;
                         if($product->currentReservation()){
@@ -119,7 +119,7 @@ class ProductController extends Controller
 
     public function manageProducts() {
         // Haal alle producten op
-        $products = Product::paginate(10);
+        $products = Product::where('archived', false)->paginate(10);
 
         // Stuur naar de producten manage pagina
         return view('products.manage', [
@@ -138,12 +138,15 @@ class ProductController extends Controller
             if($searchQuery) {
                 $products = Product::filterProducts($searchQuery);
             } else {
-                $products = Product::all();
+                $products = Product::where('archived', false);
             }
 
             // Als er producten gevonden zijn, loop door de producten heen en genereer de lijst waar ze in komen te staan
             if($products){
                 foreach($products as $product){
+                    if($product->archived == true) {
+                        break;
+                    }
                     if ($searchQuery === $product->barcode) {
                         // Als de barcode precies klopt, laat gelijk doorgaan naar de productpagina
                         $listItems['redirect'] = $product->id;
@@ -162,7 +165,7 @@ class ProductController extends Controller
 
     public function manageProduct($productId){
         // Zoek het product, of geef een 404
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
         $reservations = Reservation::where('product_id', $productId)->orderByDesc('issue_date')->paginate(10);
 
         // Stuur naar de product manage pagina
@@ -186,7 +189,7 @@ class ProductController extends Controller
         // Controlleer of de opgegeven data via het formulier valide is
         $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'numeric|min:6|nullable',
+            'barcode' => 'numeric|nullable',
             'type' => 'integer|nullable|exists:product_types,id', // Checkt ook of de meegegeven type bestaat in de database
             'description' => 'string|nullable',
             'price' => 'numeric|nullable',
@@ -229,7 +232,7 @@ class ProductController extends Controller
 
     public function editProduct($productId){
         // Zoek het product, of geef een 404. En haal alle product types op.
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
         $types = ProductType::all();
 
         // Stuur naar de product edit pagina
@@ -243,14 +246,14 @@ class ProductController extends Controller
         // Controlleer of de opgegeven data via het formulier valide is
         $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'numeric|min:6|nullable',
+            'barcode' => 'numeric|nullable',
             'type' => 'integer|nullable',
             'description' => 'string|nullable',
             'price' => 'numeric|nullable',
         ]);
 
         // Zoek het product, of geef een 404.
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
 
         // Pas de nieuwe waardes op dit product toe
         $product->name = $request->input('name');
@@ -298,26 +301,27 @@ class ProductController extends Controller
         ])->with('success', 'Product succesvol opgeslagen!');
     }
 
-    public function processDeleteProduct($productId) {
-        $product = Product::findOrFail($productId);
+    public function processArchiveProduct($productId) {
+        $product = Product::where('archived', false)->findOrFail($productId);
         $productName = $product->name;
 
-        // Probeer te verwijderen, en geef een error als dat niet lukt
+        // Probeer te archiveren, en geef een error als dat niet lukt
         try{
-            $product->delete();
+            $product->archived = true;
+            $product->save();
         } catch (\Throwable $e) {
             Log::error($e);
             return redirect()->route('manageProduct', [
                 'productId' => $productId,
-            ])->with('error', 'Kon product niet verwijderen! Probeer het nogmaals.');
+            ])->with('error', 'Kon product niet archiveren! Probeer het nogmaals.');
         }
 
-        return redirect()->route('manageProducts')->with('success', 'Product "'. $productName .'" succesvol verwijderd!');
+        return redirect()->route('manageProducts')->with('success', 'Product "'. $productName .'" succesvol gearchiveerd!');
 
     }
 
     public function returnProduct(Request $request, $productId){
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
         $reservation = $product->currentReservation();
 
         if($reservation){
@@ -337,7 +341,7 @@ class ProductController extends Controller
 
     public function processReturnProduct($productId){
         // Zoek het product, of geef een 404. En haal de reservering van het product op
-        $product = Product::findOrFail($productId);
+        $product = Product::where('archived', false)->findOrFail($productId);
         $reservation = $product->currentReservation();
 
         // Check of de reservering bestaat
@@ -359,7 +363,46 @@ class ProductController extends Controller
         } else {
             return redirect()->route('searchProducts')->with('error', 'Product heeft geen reservering!');
         }
+    }
 
+    public function showArchivedProducts(){
+        // Haal alle gearchiveerde producten op
+        $products = Product::where('archived', true)->paginate(10);
+
+        // Stuur naar de producten manage pagina
+        return view('archive.products.list', [
+            'products' => $products,
+        ]);
+    }
+
+    public function showArchivedProduct($productId){
+        // Zoek het product, of geef een 404
+        $product = Product::where('archived', true)->findOrFail($productId);
+        $reservations = Reservation::where('product_id', $productId)->orderByDesc('issue_date')->paginate(10);
+
+        // Stuur naar de product manage pagina
+        return view('archive.products.show', [
+            'product' => $product,
+            'reservations' => $reservations,
+        ]);
+    }
+
+    public function processDearchiveProduct($productId) {
+        $product = Product::where('archived', true)->findOrFail($productId);
+        $productName = $product->name;
+
+        // Probeer te dearchiveren, en geef een error als dat niet lukt
+        try{
+            $product->archived = false;
+            $product->save();
+        } catch (\Throwable $e) {
+            Log::error($e);
+            return redirect()->route('archivedProduct', [
+                'productId' => $productId,
+            ])->with('error', 'Kon product niet dearchiveren! Probeer het nogmaals.');
+        }
+
+        return redirect()->route('showArchivedProducts')->with('success', 'Product "'. $productName .'" succesvol gedearchiveerd!');
 
     }
 }

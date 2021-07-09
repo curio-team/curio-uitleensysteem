@@ -48,7 +48,7 @@
                             <a class="nav-link" href="#" onclick="$('#searchProductsModal').modal()">Producten Uitlenen</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Beheren
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -59,6 +59,14 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('import') }}">Importeren</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="archiveDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Archief
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('showArchivedProducts') }}">Producten</a>
+                            </div>
                         </li>
                         @endguest
                     </ul>
