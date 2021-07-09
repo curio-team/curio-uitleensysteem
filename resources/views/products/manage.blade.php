@@ -35,6 +35,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="row justify-content-center" id="paginationBar">
+            {{ $products->onEachSide(5)->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <script type="application/javascript">
@@ -53,6 +56,7 @@
                     }
                     document.getElementById('productList').innerHTML = "";
                     document.getElementById('productList').insertAdjacentHTML('beforeend', items.join(' '));
+                    document.getElementById('paginationBar').classList.add('d-none');
                 } else {
                     console.log('Filtering products failed.  Returned status of ' + xhr.status);
                 }

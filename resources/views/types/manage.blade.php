@@ -33,6 +33,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="row justify-content-center col-8" id="paginationBar">
+            {{ $types->onEachSide(5)->links('pagination::bootstrap-4') }}
+        </div>
     </div>
     @foreach($types as $type)
         @include('components.delete-type-modal', $type)

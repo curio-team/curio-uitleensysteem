@@ -24,10 +24,17 @@
     <div id="app">
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
             <div class="container d-flex align-items-end">
+                @guest
                 <a class="navbar-brand d-flex align-items-end" href="{{ url('/') }}">
                     <img class="my-2" src="{{ asset('img/curio_small.png') }}">
                     <div class="ml-1">Uitleensysteem</div>
                 </a>
+                @else
+                    <a class="navbar-brand d-flex align-items-end" href="#" onclick="$('#searchProductsModal').modal()">
+                        <img class="my-2" src="{{ asset('img/curio_small.png') }}">
+                        <div class="ml-1">Uitleensysteem</div>
+                    </a>
+                @endguest
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>

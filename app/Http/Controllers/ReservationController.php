@@ -45,13 +45,22 @@ class ReservationController extends Controller
 
     public function listReservations()
     {
-        $reservations = Reservation::where('returned_date', null)->with('product')->get();
-        $lateReservations = array();
+        $reservations = Reservation::where('returned_date', null)
+            ->with('product')
+            ->paginate(10);
+        $lateReservations = Reservation::where('returned_date', null)
+            ->where('return_by_date', '<', Carbon::today())
+            ->with('product')
+            ->get();
 
         foreach ($reservations as $reservation) {
             if (Carbon::parse($reservation->return_by_date)->isPast() && !Carbon::parse($reservation->return_by_date)->isToday()) {
-                $lateReservations[] = $reservation;
+                $reservation->isLate = true;
             }
+        }
+
+        foreach ($lateReservations as $lateReservation) {
+            $lateReservation->isLate = true;
         }
 
         return view('reservations.list', [

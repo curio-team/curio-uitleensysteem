@@ -84,7 +84,7 @@ class ProductTypeController extends Controller
 
     public function manageProductTypes() {
         // Haal alle producten op
-        $productTypes = ProductType::all();
+        $productTypes = ProductType::paginate(10);
 
         // Stuur naar de producten manage pagina
         return view('types.manage', [

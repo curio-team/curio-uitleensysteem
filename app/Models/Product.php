@@ -49,7 +49,7 @@ class Product extends Model
             }
 
             // If barcode EXACTLY matches
-            if($product->barcode == $searchQuery) {
+            if($product->barcode === $searchQuery) {
                 return true;
             }
 

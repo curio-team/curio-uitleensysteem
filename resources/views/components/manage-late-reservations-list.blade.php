@@ -1,4 +1,4 @@
-<tr {{ ($reservation->isLate == null) ? '' : 'class=table-danger' }}>
+<tr class="table-danger">
     <td scope="row"><a href="{{ route('manageReservation', $reservation->id) }}">{{ $reservation->id }}</a></td>
     <td><a href="{{ route('manageProduct', $reservation->product->id) }}">{{ $reservation->product->name }}</a></td>
     @if($reservation->student)

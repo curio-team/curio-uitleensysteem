@@ -32,6 +32,9 @@
                     @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-center" id="paginationBar">
+                    {{ $reservations->onEachSide(5)->links('pagination::bootstrap-4') }}
+                </div>
             </div>
             <div class="col-12 col-lg-6">
                 <h3>Te laat:</h3>

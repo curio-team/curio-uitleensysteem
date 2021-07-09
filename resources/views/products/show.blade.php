@@ -114,6 +114,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="row justify-content-center" id="paginationBar">
+            {{ $reservations->onEachSide(5)->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     @include('components.delete-product-modal', $product)

@@ -95,7 +95,7 @@ class ProductController extends Controller
             // Als er producten gevonden zijn, loop door de producten heen en genereer de blokjes waar ze in komen te staan
             if($products){
                 foreach($products as $product){
-                    if ($searchQuery == $product->barcode) {
+                    if ($searchQuery === $product->barcode) {
                         // Als de barcode precies klopt, laat gelijk doorgaan naar reservering of retour pagina
                         $listItems['redirect'] = $product->id;
                         if($product->currentReservation()){
@@ -119,7 +119,7 @@ class ProductController extends Controller
 
     public function manageProducts() {
         // Haal alle producten op
-        $products = Product::all();
+        $products = Product::paginate(10);
 
         // Stuur naar de producten manage pagina
         return view('products.manage', [
@@ -144,7 +144,7 @@ class ProductController extends Controller
             // Als er producten gevonden zijn, loop door de producten heen en genereer de lijst waar ze in komen te staan
             if($products){
                 foreach($products as $product){
-                    if ($searchQuery == $product->barcode) {
+                    if ($searchQuery === $product->barcode) {
                         // Als de barcode precies klopt, laat gelijk doorgaan naar de productpagina
                         $listItems['redirect'] = $product->id;
                         return json_encode($listItems);
@@ -163,7 +163,7 @@ class ProductController extends Controller
     public function manageProduct($productId){
         // Zoek het product, of geef een 404
         $product = Product::findOrFail($productId);
-        $reservations = Reservation::where('product_id', $productId)->orderByDesc('issue_date')->get();
+        $reservations = Reservation::where('product_id', $productId)->orderByDesc('issue_date')->paginate(10);
 
         // Stuur naar de product manage pagina
         return view('products.show', [
