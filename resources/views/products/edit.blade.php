@@ -7,6 +7,16 @@
             <h1>Product Aanpassen</h1>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-6">
                 <form action="{{ route('processEditProduct', $product->id) }}" id="editProductForm" name="editProductForm" method="post" enctype="multipart/form-data" onSubmit="return false">

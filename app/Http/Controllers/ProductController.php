@@ -186,7 +186,7 @@ class ProductController extends Controller
         // Controlleer of de opgegeven data via het formulier valide is
         $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'integer|min:6|nullable',
+            'barcode' => 'numeric|min:6|nullable',
             'type' => 'integer|nullable|exists:product_types,id', // Checkt ook of de meegegeven type bestaat in de database
             'description' => 'string|nullable',
             'price' => 'numeric|nullable',
@@ -243,7 +243,7 @@ class ProductController extends Controller
         // Controlleer of de opgegeven data via het formulier valide is
         $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'integer|min:6|nullable',
+            'barcode' => 'numeric|min:6|nullable',
             'type' => 'integer|nullable',
             'description' => 'string|nullable',
             'price' => 'numeric|nullable',
