@@ -22,7 +22,7 @@ class LoginController extends Controller
         if(!$device){
             $newDevice = new RegisteredDevice;
             $newDevice->mac_address = $macAddr;
-            $newDevice->expires_at = now()->addDays(30);
+            $newDevice->expires_at = now()->addDays(1);
             $newDevice->save();
         }
 
