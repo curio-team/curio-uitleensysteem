@@ -6,7 +6,7 @@ use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\DeviceRegisterController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -60,6 +60,8 @@ Route::get('/admin/archief/producten', [ProductController::class, 'showArchivedP
 Route::get('/admin/archief/producten/{productId}', [ProductController::class, 'showArchivedProduct'])->name('showArchivedProduct')->middleware('auth');
 Route::get('/admin/archief/producten/{productId}/dearchiveren', [ProductController::class, 'processDearchiveProduct'])->name('processDearchiveProduct')->middleware('auth');
 
+Route::get('/admin/register-device', [DeviceRegisterController::class, 'longRegisterDevice'])->name('longRegisterDevice')->middleware('auth');
+
 // AJAX routes
 Route::get('/find-products', [ProductController::class, 'findProducts'])->name('findProducts');
 Route::get('/find-manage-products', [ProductController::class, 'findManageProducts'])->name('findManageProducts');
@@ -69,7 +71,7 @@ Route::get('/find-reservations', [ReservationController::class, 'findReservation
 // Auth routes
 
 Route::get('/login', function(){return redirect('/amoclient/redirect');})->name('login');
-Route::get('/amoclient/ready', [LoginController::class, 'registerDevice']);
+Route::get('/amoclient/ready', [DeviceRegisterController::class, 'registerDevice']);
 
 Route::get('/logout', function(){return redirect('/amoclient/logout');})->name('logout');
 

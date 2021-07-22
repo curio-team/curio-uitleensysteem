@@ -86,7 +86,14 @@
                                     {{ Auth::user()->name }}
                                 </a>
 
+
+
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    @if(Auth::user()->super_admin)
+                                        <a class="dropdown-item" href="{{ route('longRegisterDevice') }}">
+                                            {{ __('Register Device') }}
+                                        </a>
+                                    @endif
                                     <a class="dropdown-item" href="#" onclick="$('#searchProductsModal').modal()">
                                         {{ __('Logout') }}
                                     </a>
