@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -21,11 +22,11 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [ProductController::class, 'searchProducts'])->name('searchProducts');
 
-Route::get('/reserveren/{productId}', [ProductController::class, 'reserveProduct'])->name('reserveProduct');
-Route::post('/reserveren/{productId}', [ProductController::class, 'processReserveProduct'])->name('processReserveProduct');
+Route::get('/reserveren/{productId}', [ProductController::class, 'reserveProduct'])->middleware('registered.device.check')->name('reserveProduct');
+Route::post('/reserveren/{productId}', [ProductController::class, 'processReserveProduct'])->middleware('registered.device.check')->name('processReserveProduct');
 
-Route::get('/retour/{productId}', [ProductController::class, 'returnProduct'])->name('returnProduct');
-Route::get('/retour/{productId}/process', [ProductController::class, 'processReturnProduct'])->name('processReturnProduct');
+Route::get('/retour/{productId}', [ProductController::class, 'returnProduct'])->middleware('registered.device.check')->name('returnProduct');
+Route::get('/retour/{productId}/process', [ProductController::class, 'processReturnProduct'])->middleware('registered.device.check')->name('processReturnProduct');
 
 Route::get('/admin/producten', [ProductController::class, 'manageProducts'])->name('manageProducts')->middleware('auth');
 Route::get('/admin/producten/toevoegen', [ProductController::class, 'createProduct'])->name('createProduct')->middleware('auth');
@@ -68,7 +69,7 @@ Route::get('/find-reservations', [ReservationController::class, 'findReservation
 // Auth routes
 
 Route::get('/login', function(){return redirect('/amoclient/redirect');})->name('login');
-Route::get('/amoclient/ready', function(){return redirect()->route('manageProducts');});
+Route::get('/amoclient/ready', [LoginController::class, 'registerDevice']);
 
 Route::get('/logout', function(){return redirect('/amoclient/logout');})->name('logout');
 
