@@ -18,6 +18,13 @@ class RegisteredDeviceCheck
     public function handle(Request $request, Closure $next)
     {
         $macAddr = substr(exec('getmac'), 0, 17);
+
+        // If device is in whitelist, skip the checking process.
+        $whitelist = explode(';', env('MAC_WHITELIST'));
+        if(in_array(strtoupper($macAddr), $whitelist)){
+            return $next($request);
+        }
+
         $device = RegisteredDevice::where('mac_address', $macAddr)->first();
 
         if(!$device){

@@ -10,6 +10,13 @@ class LoginController extends Controller
     public function registerDevice(Request $request)
     {
         $macAddr = substr(exec('getmac'), 0, 17);
+
+        // If device is in whitelist, skip the registering process.
+        $whitelist = explode(';', env('MAC_WHITELIST'));
+        if(in_array(strtoupper($macAddr), $whitelist)){
+            return redirect()->route('manageProducts');
+        }
+
         $device = RegisteredDevice::where('mac_address', $macAddr)->first();
 
         if(!$device){
