@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\Student;
+use App\Models\teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -255,21 +256,37 @@ class ImportController extends Controller
 
         if($users){
             Student::truncate();
-            $idList = [];
+            Teacher::truncate();
+            $studentIdList = [];
+            $teacherIdList = [];
+
 
             foreach($users as $user){
                 if ($user['type'] === "student") {
                     $id = preg_replace('/^([a-zA-z]*)/', "", $user['id']);
 
                     // Skip als studentnummer al bekend is
-                    if(!in_array($id, $idList)) {
-                        $idList[] = $id;
+                    if(!in_array($id, $studentIdList)) {
+                        $studentIdList[] = $id;
 
                         $student = new Student;
                         $student->id = $id;
                         $student->name = $user['name'];
                         $student->email = $user['email'];
                         $student->save();
+                    }
+                }
+
+                if ($user['type'] === "teacher") {
+
+                    // Skip als docentnummer al bekend is
+                    if(!in_array($id, $teacherIdList)) {
+                        $teacherIdList[] = $id;
+
+                        $teacher = new Teacher;
+                        $teacher->name = $user['name'];
+                        $teacher->email = $user['email'];
+                        $teacher->save();
                     }
                 }
             }
