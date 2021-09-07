@@ -70,11 +70,14 @@ class ProductController extends Controller
             $reservation->teacher_code = $teacher->code;
         }
 
+        $reservedByTeacher = Teacher::findOrFail($request->input('reservedBy'));
+
         // Stel de nieuwe reservering op
         $reservation->product_id = $productId;
         $reservation->issue_date = now();
         $reservation->return_by_date = $request->input('returnBy');
         $reservation->note = $request->input('note');
+        $reservation->reserved_by = $reservedByTeacher->code;
 
         // Probeer op te slaan, en geef een error als dat niet lukt
         try{

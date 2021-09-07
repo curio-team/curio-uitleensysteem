@@ -45,6 +45,7 @@
                         <label for="teacher" class="col-sm-4 col-form-label">Docent:</label>
                         <div class="col-sm-8">
                             <select id="teacher" name="teacher" class="form-control">
+                                <option value=""></option>
                                 @foreach($teachers as $teacher)
                                     <option value="{{ $teacher->id }}" {{ ($request->input('teacher') === $teacher->id) ? 'selected' : '' }}>{{ $teacher->name }}</option>
                                 @endforeach
@@ -63,6 +64,17 @@
                         <div class="col-sm-8">
                                 <textarea rows="3" class="form-control" id="note" name="note" placeholder="Max 1000 karakters">{{ $request->input('note') }}</textarea>
                                 <p class="d-none mb-0" id="noteValidation" style="color:red;">Maximaal 1000 karakters!</p>
+                        </div>
+                    </div>
+                    <div id="reservedByInput" class="mb-1 mb-lg-4 row">
+                        <label for="reservedBy" class="col-sm-4 col-form-label">Gereserveerd door:</label>
+                        <div class="col-sm-8">
+                            <select id="reservedBy" name="reservedBy" class="form-control">
+                                    <option value=""></option>
+                                @foreach($teachers as $teacher)
+                                    <option value="{{ $teacher->id }}" {{ ($request->input('reservedBy') === $teacher->id) ? 'selected' : '' }}>{{ $teacher->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="row d-flex justify-content-end">

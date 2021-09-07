@@ -14,6 +14,11 @@
         <td>Geen retourdatum bekend</td>
     @endif
     <td>{{ \Carbon\Carbon::parse($reservation->returned_date)->translatedFormat('l d F Y - h:i:s') }}</td>
+    @if($reservation->reserved_by)
+        <td><a href="{{ route('showTeacher', $reservation->reservedBy->id) }}">{{ $reservation->reservedBy->name }}</a></td>
+    @else
+        <td>Onbekend</td>
+    @endif
     <td>
         <textarea readonly rows="2">{{ $reservation->note }}</textarea>
     </td>

@@ -61,6 +61,18 @@
                         @endif
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p>Uitgeleend door:</p>
+                    </div>
+                    <div class="col-sm-8">
+                        @if($reservation->reserved_by)
+                            <td><a href="{{ route('showTeacher', $reservation->reservedBy->id) }}">{{ $reservation->reservedBy->name }}</a></td>
+                        @else
+                            <td>Onbekend</td>
+                        @endif
+                    </div>
+                </div>
                 <form action="{{ route('updateReservation', $reservation->id) }}" id="editReservationNoteForm" name="editReservationNoteForm" method="post">
                     @csrf
                     <div class="row mb-2">

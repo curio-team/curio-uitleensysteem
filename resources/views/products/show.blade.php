@@ -86,6 +86,18 @@
                             @endif
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p>Uitgeleend door:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            @if($product->currentReservation()->reserved_by)
+                                <td><a href="{{ route('showTeacher', $product->currentReservation()->reservedBy->id) }}">{{ $product->currentReservation()->reservedBy->name }}</a></td>
+                            @else
+                                <td>Onbekend</td>
+                            @endif
+                        </div>
+                    </div>
                 @endif
                 <div class="row">
                     <div class="col-sm-4 d-flex">
@@ -114,6 +126,7 @@
                     <th scope="col">Gereserveerd op</th>
                     <th scope="col">Gereserveerd tot</th>
                     <th scope="col">Geretourneerd op</th>
+                    <th scope="col">Uitgeleend door</th>
                     <th scope="col">Notites</th>
                 </tr>
                 </thead>
