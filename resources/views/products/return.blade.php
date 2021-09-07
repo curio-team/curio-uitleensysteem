@@ -61,6 +61,8 @@
                         <div class="col-sm-8">
                             @if($product->currentReservation()->student)
                                 <p><a href="{{ route('showStudent', $product->currentReservation()->student->id) }}">{{ $product->currentReservation()->student->name }}</a></p>
+                            @elseif($product->currentReservation()->teacher)
+                                <p><a href="{{ route('showTeacher', $product->currentReservation()->teacher->id) }}">{{ $product->currentReservation()->teacher->name }}</a> (docent)</p>
                             @else
                                 <p>{{ $product->currentReservation()->student_number }}</p>
                             @endif
@@ -71,7 +73,7 @@
                             <p>Gereserveerd Vanaf:</p>
                         </div>
                         <div class="col-sm-8">
-                            <p>{{ $product->currentReservation()->issue_date }}</p>
+                            <p>{{ \Carbon\Carbon::parse($product->currentReservation()->issue_date)->translatedFormat('l d F Y - h:i:s') }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -79,7 +81,11 @@
                             <p>Gereserveerd Tot:</p>
                         </div>
                         <div class="col-sm-8">
-                            <p>{{ $product->currentReservation()->return_by_date }}</p>
+                            @if($product->currentReservation()->return_by_date)
+                                <p>{{ \Carbon\Carbon::parse($product->currentReservation()->return_by_date)->translatedFormat('l d F Y') }}</p>
+                            @else
+                                <p>Geen retourdatum bekend</p>
+                            @endif
                         </div>
                     </div>
                     <div class="row">

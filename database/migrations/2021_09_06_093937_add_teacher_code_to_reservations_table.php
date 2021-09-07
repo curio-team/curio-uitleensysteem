@@ -15,6 +15,7 @@ class AddTeacherCodeToReservationsTable extends Migration
     {
         Schema::table('reservations', function (Blueprint $table) {
             $table->unsignedBigInteger('student_number')->nullable()->change();
+            $table->date('return_by_date')->nullable()->change();
             $table->string('teacher_code')->after('student_number')->nullable();
         });
     }
@@ -28,6 +29,7 @@ class AddTeacherCodeToReservationsTable extends Migration
     {
         Schema::table('reservations', function (Blueprint $table) {
             $table->unsignedBigInteger('student_number')->nullable(false)->change();
+            $table->date('return_by_date')->nullable(false)->change();
             $table->dropColumn('teacher_code');
         });
     }

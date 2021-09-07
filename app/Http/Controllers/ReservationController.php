@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
@@ -12,6 +13,8 @@ class ReservationController extends Controller
     public function manageReservation($reservationId)
     {
         $reservation = Reservation::findOrFail($reservationId);
+
+        Carbon::setLocale('nl');
 
         return view('reservations.show', [
             'reservation' => $reservation,
@@ -42,6 +45,60 @@ class ReservationController extends Controller
 
         return redirect()->route('manageReservation', $reservationId)->with('success', 'Reservering geüpdate.');
     }
+
+    public function extendReservation(Request $request, $reservationId)
+    {
+        // Controlleer of de opgegeven data via het formulier valide is
+        $request->validate([
+            'returnBy' => 'required|date|after_or_equal:'.  Date("Y-m-d") .'',
+        ]);
+
+        $reservation = Reservation::findOrFail($reservationId);
+
+        $reservation->return_by_date = $request->input('returnBy');
+
+        // Probeer op te slaan, en geef een error als dat niet lukt
+        try {
+            $reservation->save();
+        } catch (\Throwable $e) {
+            Log::error($e);
+            return redirect()->route('manageReservation', [
+                'reservationId' => $reservationId,
+                'request' => $request,
+            ])->with('error', 'Kon reservering niet opslaan! Probeer het nogmaals.');
+        }
+
+        return redirect()->route('manageReservation', $reservationId)->with('success', 'Reservering geüpdate.');
+
+    }
+
+    public function extendReservationIndefinitely(Request $request, $reservationId)
+    {
+        if (!Auth::user()->super_admin) {
+            $request->session()->flash('error', 'Gebruiker is geen super admin.');
+
+            return redirect()->back();
+        }
+
+        $reservation = Reservation::findOrFail($reservationId);
+
+        $reservation->return_by_date = null;
+
+        // Probeer op te slaan, en geef een error als dat niet lukt
+        try {
+            $reservation->save();
+        } catch (\Throwable $e) {
+            Log::error($e);
+            return redirect()->route('manageReservation', [
+                'reservationId' => $reservationId,
+                'request' => $request,
+            ])->with('error', 'Kon reservering niet opslaan! Probeer het nogmaals.');
+        }
+
+        return redirect()->route('manageReservation', $reservationId)->with('success', 'Reservering geüpdate.');
+    }
+
+
 
     public function listReservations()
     {

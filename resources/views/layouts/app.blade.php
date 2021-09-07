@@ -19,6 +19,10 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    @php
+        \Carbon\Carbon::setLocale('nl');
+    @endphp
 </head>
 <body>
     <div id="app">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductType;
 use App\Models\Reservation;
+use App\Models\Teacher;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -28,6 +29,7 @@ class ProductController extends Controller
         // Zoek het product, of geef een 404 en kijk na of deze al een reservering heeft
         $product = Product::where('archived', false)->findOrFail($productId);
         $reservation = $product->currentReservation();
+        $teachers = Teacher::all()->sortBy('name');
 
         // Als het product al gereserveerd is, stuur terug naar zoekvenster
         if($reservation){
@@ -38,6 +40,7 @@ class ProductController extends Controller
         return view('products.reservation', [
             'product' => $product,
             'request' => $request,
+            'teachers' => $teachers,
         ]);
 
     }
@@ -46,16 +49,28 @@ class ProductController extends Controller
         // Zoek het product, of geef een 404
         $product = Product::where('archived', false)->findOrFail($productId);
 
-        // Controlleer of de opgegeven data via het formulier valide is
-        $request->validate([
-            'studentNumber' => 'required|integer|min:100000',
-            'returnBy' => 'required|date|after_or_equal:'.  Date("Y-m-d") .'',
-            'note' => 'max:1000',
-        ]);
+        if($request->input('studentNumber')){
+            // Controlleer of de opgegeven data via het formulier valide is
+            $request->validate([
+                'studentNumber' => 'required|integer|min:100000',
+                'returnBy' => 'required|date|after_or_equal:'.  Date("Y-m-d") .'',
+                'note' => 'max:1000',
+            ]);
+            $reservation = new Reservation;
+            $reservation->student_number = $request->input('studentNumber');
+        } elseif($request->input('teacher')){
+            // Controlleer of de opgegeven data via het formulier valide is
+            $request->validate([
+                'teacher' => 'required|integer',
+                'returnBy' => 'required|date|after_or_equal:'.  Date("Y-m-d") .'',
+                'note' => 'max:1000',
+            ]);
+            $teacher = Teacher::findOrFail($request->input('teacher'));
+            $reservation = new Reservation;
+            $reservation->teacher_code = $teacher->code;
+        }
 
         // Stel de nieuwe reservering op
-        $reservation = new Reservation;
-        $reservation->student_number = $request->input('studentNumber');
         $reservation->product_id = $productId;
         $reservation->issue_date = now();
         $reservation->return_by_date = $request->input('returnBy');
@@ -73,9 +88,19 @@ class ProductController extends Controller
         }
 
         // Opslaan gelukt, stuur terug naar de zoekpagina met een succesmelding
-        return redirect()->route('searchProducts')->with(
-            'success', $product->name .' is succesvol uitgeleend aan studentnummer '. $reservation->student_number
-        );
+        if($request->input('studentNumber')){
+            return redirect()->route('searchProducts')->with(
+                'success', $product->name .' is succesvol uitgeleend aan studentnummer '. $reservation->student_number
+            );
+        } elseif($request->input('teacher')){
+            return redirect()->route('searchProducts')->with(
+                'success', $product->name .' is succesvol uitgeleend aan '. $teacher->name .'.'
+            );
+        } else {
+            return redirect()->route('searchProducts')->with(
+                'success', $product->name .' is succesvol uitgeleend.'
+            );
+        }
     }
 
     public function findProducts(Request $request){

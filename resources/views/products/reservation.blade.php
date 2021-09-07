@@ -23,36 +23,45 @@
             <div class="row">
                 <div class="col-6">
                     <div class="mb-1 mb-lg-4 row">
-                        <label for="studentNumber" class="col-sm-4 col-form-label">Studentnummer</label>
+                        <label for="reserveFor" class="col-sm-4 col-form-label">Uitlenen aan:</label>
+                        <div class="col-sm-4 col-form-label">
+                            <input type="radio" id="radioStudent" name="reserveFor" value="student" {{ (($request->input('reserveFor') === "student") || !$request->input('reserveFor')) ? 'checked' : '' }}>
+                            <label for="radioStudent">Student</label>
+                        </div>
+                        <div class="col-sm-4 col-form-label">
+                            <input type="radio" id="radioTeacher" name="reserveFor" value="teacher" {{ ($request->input('reserveFor') === "teacher") ? 'checked' : '' }}>
+                            <label for="radioTeacher">Docent</label>
+                        </div>
+                        </div>
+                    <div id="studentNumberInput" class="mb-1 mb-lg-4 row">
+                        <label for="studentNumber" class="col-sm-4 col-form-label">Studentnummer:</label>
                         <div class="col-sm-8">
-                            @if (null !== $request->input('studentNumber'))
-                                <input autofocus required type="number" class="form-control" id="studentNumber" name="studentNumber" value="{{ $request->input('studentNumber') }}">
-                            @else
-                                <input autofocus required type="number" class="form-control" id="studentNumber" name="studentNumber">
-                            @endif
+                            <input autofocus required type="number" class="form-control" id="studentNumber" name="studentNumber" {{ $request->input('studentNumber') ? 'value="'. $request->input('studentNumber') .'"' : '' }}>
                             <p class="d-none mb-0" id="studentNumberValidation1" style="color:red;">Vul een studentnummer in!</p>
                             <p class="d-none mb-0" id="studentNumberValidation2" style="color:red;">Studentnummer te kort!</p>
                         </div>
                     </div>
-                    <div class="mb-1 mb-lg-4 row">
-                        <label for="returnBy" class="col-sm-4 col-form-label">Inleveren vóór:</label>
+                    <div id="teacherInput" class="mb-1 mb-lg-4 row d-none">
+                        <label for="teacher" class="col-sm-4 col-form-label">Docent:</label>
                         <div class="col-sm-8">
-                            @if (null !== $request->input('returnBy'))
-                                <input required type="date" class="form-control" id="returnBy" name="returnBy" onchange="checkReturnBy()" value="{{ $request->input('studentNumber') }}">
-                            @else
-                                <input required type="date" class="form-control" id="returnBy" name="returnBy" onchange="checkReturnBy()">
-                            @endif
+                            <select id="teacher" name="teacher" class="form-control">
+                                @foreach($teachers as $teacher)
+                                    <option value="{{ $teacher->id }}" {{ ($request->input('teacher') === $teacher->id) ? 'selected' : '' }}>{{ $teacher->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-1 mb-lg-4 row">
+                        <label for="returnBy" class="col-sm-4 col-form-label">Gereserveerd tot:</label>
+                        <div class="col-sm-8">
+                                <input required type="date" class="form-control" id="returnBy" name="returnBy" onchange="checkReturnBy()" {{ $request->input('returnBy') ? 'value="'. $request->input('returnBy') .'"' : '' }}>
                             <p class="d-none mb-0" id="dateValidation" style="color:red;">Datum moet vandaag of later zijn!</p>
                         </div>
                     </div>
                     <div class="mb-1 mb-lg-4 row">
                         <label for="note" class="col-sm-4 col-form-label">Notitie:</label>
                         <div class="col-sm-8">
-                            @if (null !== $request->input('note'))
                                 <textarea rows="3" class="form-control" id="note" name="note" placeholder="Max 1000 karakters">{{ $request->input('note') }}</textarea>
-                            @else
-                                <textarea rows="3" class="form-control" id="note" name="note" placeholder="Max 1000 karakters"></textarea>
-                            @endif
                                 <p class="d-none mb-0" id="noteValidation" style="color:red;">Maximaal 1000 karakters!</p>
                         </div>
                     </div>
@@ -74,6 +83,8 @@
 
     <script type="text/javascript">
 
+        document.getElementById('radioStudent').addEventListener('change', checkReserveFor);
+        document.getElementById('radioTeacher').addEventListener('change', checkReserveFor);
         document.getElementById('studentNumber').addEventListener("focusout", checkStudentNumber);
         document.getElementById('note').addEventListener("focusout", checkNote);
         document.getElementById('returnBy').valueAsDate = new Date();
@@ -81,6 +92,24 @@
         var validStudentNumber = false;
         var validReturnBy = false;
         var validNote = true;
+
+        function checkReserveFor() {
+            if(document.getElementById('radioStudent').checked){
+                document.getElementById('studentNumberInput').classList.remove('d-none');
+                document.getElementById('studentNumber').disabled = false;
+
+                document.getElementById('teacherInput').classList.add('d-none');
+                document.getElementById('teacher').disabled = true;
+            }
+
+            if(document.getElementById('radioTeacher').checked){
+                document.getElementById('teacherInput').classList.remove('d-none');
+                document.getElementById('teacher').disabled = false;
+
+                document.getElementById('studentNumberInput').classList.add('d-none');
+                document.getElementById('studentNumber').disabled = true;
+            }
+        }
 
         function checkStudentNumber() {
             if(document.getElementById('studentNumber').value.length === 0) {
@@ -138,7 +167,8 @@
             }
         }
 
-        @if(null !== $request->input('studentNumber') || null !== $request->input('returnBy') || null !== $request->input('note')) {
+        @if(null !== $request->input('studentNumber') || null !== $request->input('teacher') || null !== $request->input('returnBy') || null !== $request->input('note')) {
+            checkReserveFor();
             checkStudentNumber();
             checkReturnBy();
             checkNote();

@@ -19,6 +19,11 @@ class Reservation extends Model
         return $this->belongsTo(Student::class, 'student_number', 'id');
     }
 
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class, 'teacher_code', 'code');
+    }
+
     static function filterReservations(string $searchQuery)
     {
         return self::all()->filter(function($reservation) use ($searchQuery) {

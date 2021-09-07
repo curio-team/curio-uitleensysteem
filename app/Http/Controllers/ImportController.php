@@ -278,12 +278,14 @@ class ImportController extends Controller
                 }
 
                 if ($user['type'] === "teacher") {
+                    $id = strtolower($user['id']);
 
                     // Skip als docentnummer al bekend is
                     if(!in_array($id, $teacherIdList)) {
                         $teacherIdList[] = $id;
 
                         $teacher = new Teacher;
+                        $teacher->code = $id;
                         $teacher->name = $user['name'];
                         $teacher->email = $user['email'];
                         $teacher->save();
