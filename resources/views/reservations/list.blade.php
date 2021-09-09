@@ -37,7 +37,10 @@
                 </div>
             </div>
             <div class="col-12 col-lg-6">
-                <h3>Te laat:</h3>
+                <div class="d-flex justify-content-between">
+                    <h3 class="col-6">Te laat:</h3>
+                    <a href="{{ route('exportLateReservations') }}" class="col-3 btn btn-primary">CSV Export</a>
+                </div>
                 <table class="table">
                     <thead>
                     <tr>

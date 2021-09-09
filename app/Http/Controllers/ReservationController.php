@@ -103,6 +103,8 @@ class ReservationController extends Controller
     public function listReservations()
     {
         $reservations = Reservation::where('returned_date', null)
+            ->where('return_by_date', '>=', Carbon::today())
+            ->orwhere('return_by_date', null)
             ->with('product')
             ->paginate(10);
         $lateReservations = Reservation::where('returned_date', null)
@@ -111,8 +113,8 @@ class ReservationController extends Controller
             ->get();
 
         foreach ($reservations as $reservation) {
-            if (Carbon::parse($reservation->return_by_date)->isPast() && !Carbon::parse($reservation->return_by_date)->isToday()) {
-                $reservation->isLate = true;
+            if ($reservation->return_by_date === null) {
+                $reservation->isInfinite = true;
             }
         }
 

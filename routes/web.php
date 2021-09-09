@@ -8,6 +8,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\DeviceRegisterController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -39,12 +40,11 @@ Route::post('/admin/producten/{productId}/aanpassen', [ProductController::class,
 Route::get('/admin/producten/{productId}/archiveren', [ProductController::class, 'processArchiveProduct'])->name('processArchiveProduct')->middleware('auth');
 
 Route::get('/admin/reserveringen', [ReservationController::class, 'listReservations'])->name('listReservations')->middleware('auth');
+Route::get('/admin/reserveringen/export-te-laat', [ExportController::class, 'exportLateReservations'])->name('exportLateReservations')->middleware('auth');
 Route::get('/admin/reserveringen/{reservationId}', [ReservationController::class, 'manageReservation'])->name('manageReservation')->middleware('auth');
 Route::post('/admin/reserveringen/{reservationId}', [ReservationController::class, 'updateReservation'])->name('updateReservation')->middleware('auth');
 Route::post('/admin/reserveringen/{reservationId}/verlengen', [ReservationController::class, 'extendReservation'])->name('extendReservation')->middleware('auth');
 Route::get('/admin/reserveringen/{reservationId}/oneindig-verlengen', [ReservationController::class, 'extendReservationIndefinitely'])->name('extendReservationIndefinitely')->middleware('auth');
-
-
 
 Route::get('/admin/types', [ProductTypeController::class, 'manageProductTypes'])->name('manageProductTypes')->middleware('auth');
 Route::get('/admin/types/toevoegen', [ProductTypeController::class, 'createProductType'])->name('createProductType')->middleware('auth');
