@@ -106,10 +106,12 @@ class ReservationController extends Controller
             ->where('return_by_date', '>=', Carbon::today())
             ->orwhere('return_by_date', null)
             ->with('product')
+            ->orderByDesc('updated_at')
             ->paginate(10);
         $lateReservations = Reservation::where('returned_date', null)
             ->where('return_by_date', '<', Carbon::today())
             ->with('product')
+            ->orderByDesc('updated_at')
             ->get();
 
         foreach ($reservations as $reservation) {
