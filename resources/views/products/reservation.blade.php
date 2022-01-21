@@ -77,8 +77,16 @@
                             </select>
                         </div>
                     </div>
+                    <div class="mb-1 mb-lg-4 row">
+                        <div class="col-sm-6">
+                            <p class="font-weight-bold">De ontvanger gaat akkoord met de voorwaarden:</p>
+                        </div>
+                        <div class="col-sm-6 form-check">
+                            <input id="agreementCheck" style="width: 30px; height: 30px;" class="form-check-input" name="productCheck" type="checkbox">
+                        </div>
+                    </div>
                     <div class="row d-flex justify-content-end">
-                        <input class="btn-lg btn-primary disabled mr-3 col-sm-4" type="button" id="submitButton" value="Uitlenen" onClick="document.reservationForm.submit()">
+                        <input class="btn-lg btn-primary disabled mr-3 col-sm-4" type="button" id="submitButton" value="Uitlenen" onclick="submitForm()">
                     </div>
                 </div>
                 <div class="col-6">
@@ -91,6 +99,23 @@
             </div>
 
         </form>
+        <div id="agreement-text">
+            <h3>Voorwaarden:</h3>
+            <ol>
+                <li>De ontvanger is aansprakelijk voor de op diens naam geleende materialen. Wordt bij het terugbrengen van de materialen een beschadiging of verontreiniging geconstateerd, of zijn de materialen gestolen of vermist, dan is de ontvanger verantwoordelijk. In dat geval worden er afspraken gemaakt tussen de beheerder (Steven van Rosendaal, <a href="mailto:s.vanrosendaal@curio.nl">s.vanrosendaal@curio.nl</a>) en de ontvanger over de afhandeling daarvan. Probeer bij schade nooit zelf te repareren.</li>
+                <li>De ontvanger leent materialen voor de daarvoor vastgestelde leentermijn. Indien de ontvanger materialen na het verstrijken van de leentermijn ze nog niet heeft ingeleverd, dan wordt dit zo snel mogelijk gemeld bij de uitgever of de SLB'er. Bij verder uitblijven van het inleveren worden verdere stappen ondernomen.</li>
+                <ul>
+                    <li>Als de ontvanger onder de 18 jaar is worden de ouders op de hoogte gebracht.</li>
+                    <li>Als de ontvanger boven de 18 jaar is wordt er contact met de ontvanger zelf opgenomen</li>
+                    <li>Bij langdurig uitblijven van de vastgestelde leentermijn wordt er altijd aangifte gedaan.</li>
+                </ul>
+                <li>Gezien de ontvanger verantwoordelijk is voor de geleende materialen, is het niet toegestaan om het product verder uit te lenen. Als een andere student/docent wenst de materialen te lenen, moeten die opnieuw door ons uitgeleend worden.</li>
+                <ul>
+                    <li>Het is wel toegestaan dat de materialen door anderen gebruikt worden als de ontvanger toezicht houdt. De ontvanger blijft verantwoordelijk voor de materialen.</li>
+                </ul>
+            </ol>
+
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -104,6 +129,7 @@
         var validStudentNumber = false;
         var validReturnBy = false;
         var validNote = true;
+        var checkedAgreement = false;
 
         function checkReserveFor() {
             if(document.getElementById('radioStudent').checked){
@@ -145,7 +171,7 @@
         function checkReturnBy() {
             var dateString = document.getElementById('returnBy').value;
             var returnByDate = new Date(dateString);
-            var today = new Date();
+            var today = new Date().setHours(0,0,0,0);
             if ( returnByDate < today ) {
                 document.getElementById('dateValidation').classList.remove('d-none');
                 document.getElementById('dateValidation').classList.add('d-block');
@@ -171,11 +197,28 @@
             checkSubmit();
         }
 
-        function checkSubmit(){
-            if(validStudentNumber && validReturnBy && validNote) {
-                document.getElementById('submitButton').classList.remove('disabled');
+        document.getElementById('agreementCheck').addEventListener("click", checkAgreementCheck);
+
+        function checkAgreementCheck() {
+            if(document.getElementById('agreementCheck').checked === true) {
+                checkedAgreement = true;
             } else {
-                document.getElementById('submitButton').classList.add('disabled');
+                checkedAgreement = false;
+            }
+            checkSubmit();
+        }
+
+        function checkSubmit(){
+            if(validStudentNumber && validReturnBy && validNote && checkedAgreement) {
+                document.getElementById('submitButton').disabled = false;
+            } else {
+                document.getElementById('submitButton').disabled = true;
+            }
+        }
+
+        function submitForm() {
+            if(validStudentNumber && validReturnBy && validNote && checkedAgreement) {
+                document.reservationForm.submit()
             }
         }
 
