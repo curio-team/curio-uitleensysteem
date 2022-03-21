@@ -237,7 +237,7 @@
         }
 
         function submitForm() {
-            if(validStudentNumber && validReturnBy && validNote && checkedAgreement) {
+            if((validStudentNumber || validTeacher) && validReturnBy && validNote && checkedAgreement) {
                 document.reservationForm.submit()
             }
         }
