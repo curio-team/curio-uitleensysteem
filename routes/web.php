@@ -62,6 +62,8 @@ Route::post('/admin/import/product', [ImportController::class, 'processProductIm
 Route::post('/admin/import/product/overwrite', [ImportController::class, 'processProductImportOverwrite'])->name('processProductImportOverwrite')->middleware('auth');
 Route::post('/admin/import/image', [ImportController::class, 'processImageImport'])->name('processImageImport')->middleware('auth');
 Route::get('/admin/import/studenten', [ImportController::class, 'processStudentImport'])->name('processStudentImport')->middleware('auth');
+Route::get('/admin/import/export-products', [ExportController::class, 'exportProducts'])->name('exportProducts')->middleware('auth');
+
 
 Route::get('/admin/archief/producten', [ProductController::class, 'showArchivedProducts'])->name('showArchivedProducts')->middleware('auth');
 Route::get('/admin/archief/producten/{productId}', [ProductController::class, 'showArchivedProduct'])->name('showArchivedProduct')->middleware('auth');

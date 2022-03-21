@@ -6,13 +6,14 @@
         <table class="col-12 col-lg-6">
             <tr>
                 <td>Producten</td>
-                <td class="d-flex">
+                <td class="d-flex align-items-center">
                     <form id="productImportForm" method="post" enctype="multipart/form-data" action="{{ route('processProductImport') }}">
                         @csrf
                         <input type="file" id="productImport" name="productImportCSV" class="d-none" onchange="document.getElementById('productImportForm').submit()" />
                         <input type="button" class="btn btn-primary mr-2" value="Import Uploaden" onclick="document.getElementById('productImport').click();" />
                     </form>
-                    <a download class="btn btn-primary" href="{{ asset('/downloads/Producten_Sjabloon.csv') }}">Sjabloon Downloaden</a>
+                    <a download class="btn btn-primary mr-2" href="{{ asset('/downloads/Producten_Sjabloon.csv') }}">Sjabloon Downloaden</a>
+                    <a download class="btn btn-primary" href="{{ route('exportProducts') }}">Producten Exporteren</a>
                 </td>
             </tr>
             <tr>

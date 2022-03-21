@@ -2,12 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ExportController extends Controller
 {
+    public function exportProducts()
+    {
+        $products = Product::all();
+
+        $productRows = [];
+
+        // output headers so that the file is downloaded rather than displayed
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=producten_'. Carbon::today()->format('d-m-Y') .'.csv');
+
+        // create a file pointer connected to the output stream
+        $output = fopen('php://output', 'w');
+
+        // output the column headings
+        fputcsv($output, array('name', 'barcode', 'type', 'description', 'price'), ';');
+
+        // put data in rows
+        foreach ($products as $product) {
+
+            $productRows[] = [
+                $product->name,
+                $product->barcode,
+                $product->type->name,
+                $product->description,
+                $product->price
+            ];
+
+        }
+
+        // loop over the rows, outputting them
+        foreach ($productRows as $productRow){
+            fputcsv($output, $productRow, ';');
+        }
+    }
+
     public function exportLateReservations() {
         $lateReservations = Reservation::where('returned_date', null)
             ->where('return_by_date', '<', Carbon::today())
