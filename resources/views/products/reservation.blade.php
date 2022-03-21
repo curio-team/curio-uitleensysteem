@@ -123,11 +123,13 @@
         document.getElementById('radioStudent').addEventListener('change', checkReserveFor);
         document.getElementById('radioTeacher').addEventListener('change', checkReserveFor);
         document.getElementById('studentNumber').addEventListener("focusout", checkStudentNumber);
+        document.getElementById('teacher').addEventListener("focusout", checkTeacher);
         document.getElementById('note').addEventListener("focusout", checkNote);
         document.getElementById('returnBy').valueAsDate = new Date();
 
         var validStudentNumber = false;
-        var validReturnBy = false;
+        var validTeacher = false;
+        var validReturnBy = true;
         var validNote = true;
         var checkedAgreement = false;
 
@@ -168,9 +170,18 @@
             checkSubmit();
         }
 
+        function checkTeacher() {
+            if(document.getElementById('teacher').value != "") {
+                validTeacher = true;
+            } else {
+                validTeacher = false;
+            }
+            checkSubmit();
+        }
+
         function checkReturnBy() {
             var dateString = document.getElementById('returnBy').value;
-            var returnByDate = new Date(dateString);
+            var returnByDate = new Date(dateString).getTime();
             var today = new Date().setHours(0,0,0,0);
             if ( returnByDate < today ) {
                 document.getElementById('dateValidation').classList.remove('d-none');
@@ -209,10 +220,19 @@
         }
 
         function checkSubmit(){
-            if(validStudentNumber && validReturnBy && validNote && checkedAgreement) {
-                document.getElementById('submitButton').disabled = false;
-            } else {
-                document.getElementById('submitButton').disabled = true;
+            if(document.getElementById('radioStudent').checked){
+                if(validStudentNumber && validReturnBy && validNote && checkedAgreement) {
+                    document.getElementById('submitButton').disabled = false;
+                } else {
+                    document.getElementById('submitButton').disabled = true;
+                }
+            }
+            if(document.getElementById('radioTeacher').checked){
+                if(validTeacher && validReturnBy && validNote && checkedAgreement) {
+                    document.getElementById('submitButton').disabled = false;
+                } else {
+                    document.getElementById('submitButton').disabled = true;
+                }
             }
         }
 
@@ -225,6 +245,7 @@
         @if(null !== $request->input('studentNumber') || null !== $request->input('teacher') || null !== $request->input('returnBy') || null !== $request->input('note')) {
             checkReserveFor();
             checkStudentNumber();
+            checkTeacher();
             checkReturnBy();
             checkNote();
         }
